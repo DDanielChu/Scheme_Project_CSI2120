@@ -41,7 +41,7 @@
 
   )
 )
-
+; YOU WOULD CALL IT LIKE (create-base-matches PLIST) TO GET THE BASE LIST 
 
 
 (define practiceList
@@ -102,16 +102,17 @@
         ((findIfResidentExistInListOfTupes rid (car (cdr (car matches))) ) #t )
         (else (matched? rid (cdr matches)))
         )
-  )
+)
 
 
 
 ;Fifth Method: get-match
 (define (get-match pid matches)
-  (cond ((string=? pid (car (car matches))) (car matches))
+  (cond ((null? matches) '())
+    ((string=? pid (car (car matches))) (car matches))
   (else (get-match pid (cdr matches)))
   )
- )
+)
 
 
 ;Uxiliery Method

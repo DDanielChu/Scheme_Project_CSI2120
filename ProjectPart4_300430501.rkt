@@ -120,20 +120,19 @@
 (define (compareSecondElement pair theList)
   (cond ((null? theList) (list pair) )
         ((> (cdr (car theList)) (cdr pair)) (cons (car theList) (compareSecondElement pair (cdr theList) )) )
-        (else (cons pair theList))
+        (else  (cons pair theList))
         )
   )
 
 ;Sixth Method: add-resident
 (define (add-resident-to-match pair match)
   (cond ((null? (car (cdr match))) (cons (car match) (list (list pair))))
-  (else (cons (car match) (compareSecondElement pair (car (cdr match)))))
+  (else (cons (car match) (list (compareSecondElement pair (car (cdr match))))))
   )
 )
 
 
 ;The McVitie-Wilson functions
-
 
 
 ;Seventh Method: offer
@@ -149,14 +148,11 @@
               result)))))
 
 
-
 ; helper for evaluate
 (define (update-matches pid new-match matches)
-  (if (null? matches)
-      (list new-match)
       (if (string=? pid (car (car matches)))
           (cons new-match (cdr matches))
-          (cons (car matches) (update-matches pid new-match (cdr matches))))))
+          (cons (car matches) (update-matches pid new-match (cdr matches)))))
       
 
 
@@ -200,15 +196,25 @@
                 matches))))))))))
 
 
+
 ; Gale Shapley
 ; if no residents left: return matches
-; take next resident try to match them (offer)
+; else, take next resident try to match them (offer)
 ; update matches
 ; repeat with remaining residents
 
-(define (gale-shapley rlist plist matchList)
-  (cond ((null? PLIST) 1))
+
+(define (gale-shapley2 rlistChanged rlist plist matches)
+  (if (null? rlistChanged)
+    matches
+    (gale-shapley2 (cdr rlistChanged) rlist plist (offer (car rlistChanged) rlist plist matches))))
+
+
+(define (gale-shapley rlist plist matches)
+  (gale-shapley2 rlist rlist plist matches)
   )
+
+(gale-shapley RLIST PLIST '())
 
 (define (get-not-matched-list rlist matchList)
   (cond ((null? PLIST) 1))
@@ -236,6 +242,11 @@
 
 
 
+; get-not-matched-list
+; display program matches
+; display not matched
+; get-total available positons
+
 (define (gale-shapley-print rlist plist)
   (let* ((matches (gale-shapley rlist plist '()))
         (not-matched-list (get-not-matched-list rlist matches)))
@@ -248,8 +259,6 @@
   (display (get-total-available-positions matches plist))
   (newline))
 )
-; get-not-matched-list
-; display program matches
-; display not matched
-; get-total available positons
+
+
 

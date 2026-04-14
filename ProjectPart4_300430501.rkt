@@ -128,8 +128,7 @@
   (cond ((null? (car (cdr match))) (cons (car match) (list (list pair))))
   (else (cons (car match) (compareSecondElement pair (car (cdr match)))))
   )
-
-  )
+)
 
 
 ;The McVitie-Wilson functions

@@ -207,12 +207,15 @@
 (define (gale-shapley rlist plist matches)
   (if (null? rlist)
     matches
-    (gale-shapley (cdr r-list) plist (offer (car rlist) rlist plist matches))))
+    (gale-shapley (cdr rlist) plist (offer (car rlist) rlist plist matches))))
 
 
-(define (get-not-matched-list RLIST matchList)
-  (cond ((null? PLIST) 1))
-  )
+(define (get-not-matched-list rlist matches)
+  (cond ((null? rlist) '()) ; base case empty rlist
+        ((matched? (car (car rlist)) matches) ; if resident matched, go to next resident
+          (get-not-matched-list (cdr rlist) matches))
+        (else  ; residnet not matched then add to list
+          (cons (car rlist) (get-not-matched-list (cdr rlist) matches)))))
 
 
 (define (display-program-matches element rlist plist)
@@ -236,11 +239,6 @@
   )
 
 
-
-; get-not-matched-list
-; display program matches
-; display not matched
-; get-total available positons
 
 (define (gale-shapley-print rlist plist)
   (let* ((matches (gale-shapley rlist plist '()))

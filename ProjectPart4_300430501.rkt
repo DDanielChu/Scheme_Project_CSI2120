@@ -138,8 +138,8 @@
 
 
 ;Seventh Method: offer
-(define (offer rinfo rlist plist matches)) 
-  (let loop ((rol (cadddr rinfo))))    ; loops over programs on the residents rol
+(define (offer rinfo rlist plist matches) 
+  (let loop ((rol (cadddr rinfo)))    ; loops over programs on the residents rol
     (if (null? rol)
         matches
         (let* ((pid (car rol))
@@ -147,7 +147,7 @@
                (result (evaluate rinfo pinfo rlist plist matches)))
           (if (equal? result matches) ; if result = matches the resident was rejected
               (loop (cdr rol))
-              result))))) 
+              result)))))
 
 
 ; Evaluate: Tries to match a resident with a specific program
@@ -156,7 +156,7 @@
         (rid-rank (rank rid pinfo))
         (pid (car pinfo))
         (capacity (caddr pinfo))
-        (current-match (get-match pid matches))
+        (current-match (get-match pid matches)))
 
   (cond
     ((or (not(number? rid-rank)) (< rid-rank 0)) ; Residen unranked, reject
@@ -167,28 +167,25 @@
 
     (else
       (let ((current-residents (cadr current-match)))
-      cond(
+      (cond
         ((< (length current-residents) capacity) ; if capacity isn't full, add residnet
             (update-matches pid (add-resident-to-match (cons rid rid-rank) current-match) matches))
 
-           (else ; capacity is full
+          (else ; capacity is full
             (let* ((least-pref (car current-residents))   
                    (least-rid  (car least-pref))
                    (least-rank (cdr least-pref)))
                   
-              (cond
-                ((< rid-rank least-rank) ; if new residnet preferred, remove least preffered
+            (cond
+              ((< rid-rank least-rank) ; if new residnet preferred, remove least preffered
 
-                 (let* ((trimmed-residents (cdr current-residents))
-                        (temp-match    (list pid trimmed-residents))
-                        (updated-match (add-resident-to-match (cons rid rid-rank) temp-match))
-                        (new-matches   (update-matches pid updated-match matches))
-                        (removed-rinfo  (get-resident-info least-rid rlist)))
+                (let* ((trimmed-residents (cdr current-residents))
+                      (temp-match    (list pid trimmed-residents))
+                      (updated-match (add-resident-to-match (cons rid rid-rank) temp-match))
+                      (new-matches   (update-matches pid updated-match matches))
+                      (removed-rinfo  (get-resident-info least-rid rlist)))
 
-                  (offer removed-rinfo rlist plist new-matches)))  ; Removed resident needs to match with a new prog
-                (else ; resident rejected
-                  matches)
-      )
-    )
-  )
-)
+                (offer removed-rinfo rlist plist new-matches)))  ; Removed resident needs to match with a new prog
+              (else ; resident rejected
+                matches))))))))))
+      

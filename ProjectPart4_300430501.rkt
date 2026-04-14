@@ -223,8 +223,15 @@
   )
 
 (define (display-not-matched not-matched-list rlist)
-  (cond ((null? PLIST) 1))
-  )
+    (for-each (lambda (rinfo)
+        (display (caddr rinfo)) ; last name
+        (display ",")
+        (display (cadr rinfo)) ; first name
+        (display ",")
+        (display (car rinfo)) ; resident id
+        (display ",")
+        (display "XXX,NOT_MATCHED") (newline))
+      not-matched-list))
 
 (define (get-total-available-positions matches plist)
   (let* ((currentProgramChecked ( ))   (totalPositionsInProgram (get-program-info )))

@@ -206,11 +206,11 @@
 ; update matches
 ; repeat with remaining residents
 
-(define (gale-shapley RLIST PLIST matchList)
+(define (gale-shapley rlist plist matchList)
   (cond ((null? PLIST) 1))
   )
 
-(define (get-not-matched-list RLIST matchList)
+(define (get-not-matched-list rlist matchList)
   (cond ((null? PLIST) 1))
   )
 
@@ -224,11 +224,10 @@
   )
 
 (define (get-total-available-positions matches plist)
-  (let* ((currentProgramChecked ( ))   (totalPositionsInProgram (get-program-info )))
+  (let* ((currentProgramChecked (car (car matches)))   (totalPositionsInProgram (caddr (get-program-info currentProgramChecked plist))))
   
   (cond ((null? matches) 0)
-        (else ())
-
+        (else (+ (- totalPositionsInProgram (length (cadr matches))) (get-total-available-positions (cdr matches) plist)))
 
         )
 

@@ -149,6 +149,17 @@
               result)))))
 
 
+
+; helper for evaluate
+(define (update-matches pid new-match matches)
+  (if (null? matches)
+      (list new-match)
+      (if (string=? pid (car (car matches)))
+          (cons new-match (cdr matches))
+          (cons (car matches) (update-matches pid new-match (cdr matches))))))
+      
+
+
 ; Evaluate: Tries to match a resident with a specific program
 (define (evaluate rinfo pinfo rlist plist matches)
   (let* ((rid (car rinfo))
@@ -161,7 +172,7 @@
     ((or (not(number? rid-rank)) (< rid-rank 0)) ; Residen unranked, reject
       matches)
 
-    ((null? current-match)  ; Create new match entry if program isn't on it yet
+    ((null? (cadr current-match))  ; Create new match entry if program isn't on it yet
        (cons (list pid (list (cons rid rid-rank))) matches))
 
     (else
@@ -188,21 +199,42 @@
               (else ; resident rejected
                 matches))))))))))
 
-; helper for evaluate
-(define (update-matches pid new-match matches)
-  (if (null? matches)
-      (list new-match)
-      (if (string=? pid (car (car matches)))
-          (cons new-match (cdr matches))
-          (cons (car matches) (update-matches pid new-match (cdr matches))))))
-      
-
 
 ; Gale Shapley
 ; if no residents left: return matches
 ; take next resident try to match them (offer)
 ; update matches
 ; repeat with remaining residents
+
+(define (gale-shapley RLIST PLIST matchList)
+  (cond ((null? PLIST) 1))
+  )
+
+(define (get-not-matched-list RLIST matchList)
+  (cond ((null? PLIST) 1))
+  )
+
+
+(define (display-program-matches element rlist plist)
+  (cond ((null? PLIST) 1))
+  )
+
+(define (display-not-matched not-matched-list rlist)
+  (cond ((null? PLIST) 1))
+  )
+
+(define (get-total-available-positions matches plist)
+  (let* ((currentProgramChecked ( ))   (totalPositionsInProgram (get-program-info )))
+  
+  (cond ((null? matches) 0)
+        (else ())
+
+
+        )
+
+    )
+  )
+
 
 
 (define (gale-shapley-print rlist plist)

@@ -28,6 +28,7 @@
 (define RLIST (read-residents "residentSmall.csv"))
 
 
+
 ;Starting from here is code made by students
 
 ;Uxilery Method to create a base for matches that suits the order of the PLIST
@@ -136,6 +137,18 @@
 
 
 ;Seventh Method: offer
+(define (offer rinfo rlsit plist matches)) 
+  (let loop ((rol (cadddr info))))    ; loops over programs on the residents rol
+    (if (null? rol)
+        matches
+        (let* ((pid (car rol))
+               (pinfo (get-program-info pid plist))
+               (result (evaluate rinfo pinfo rlist plist matches)))
+          (if (equal? result matches) ; if result = matches the resident was rejected
+              (loop (cdr rol))
+              result))))) 
 
+
+; Evaluate
 
 

@@ -228,18 +228,18 @@
 
 (define (display-program-matches element rlist plist)
   (let* ((rinfoList (cadr element))  (pinfo (get-program-info (car element) plist)) (programID (car pinfo)) (programName (cadr pinfo)))
-    (for-each (lambda(x) (let* ((rinfo (get-resident-info x) )  (lastname (cadr rinfo))  (firstname (caddr rinfo)))
-                          ((display firstname)
+    (for-each (lambda(x) (let* ((residentId (car x) )(rinfo (get-resident-info residentId rlist) )  (lastname (cadr rinfo))  (firstname (caddr rinfo)))
+                          (display firstname)
                            (display ", ")
                            (display lastname)
                            (display ", ")
-                           (display x)
+                           (display residentId)
                            (display ", ")
                            (display programID)
                            (display ", ")
                            (display programName)
-
-                           )
+                           (newline)
+                           
                           )
 
 
@@ -259,15 +259,17 @@
       not-matched-list))
 
 (define (get-total-available-positions matches plist)
-  (let* ((currentProgramChecked (car (car matches)))   (totalPositionsInProgram (caddr (get-program-info currentProgramChecked plist))))
-  
   (cond ((null? matches) 0)
-        (else (+ (- totalPositionsInProgram (length (cadr matches))) (get-total-available-positions (cdr matches) plist)))
+        (else 
+               (let* ((currentProgramChecked (car (car matches)))   (totalPositionsInProgram (caddr (get-program-info currentProgramChecked plist))))
+  
+                 (+ (- totalPositionsInProgram (length (cadr (car matches)))) (get-total-available-positions (cdr matches) plist))
 
-        )
-
-    )
+                 )
+               )
+              
   )
+)
 
 
 
@@ -284,5 +286,6 @@
   (newline))
 )
 
+(gale-shapley-print RLIST PLIST)
 
 

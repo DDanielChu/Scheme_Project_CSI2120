@@ -28,6 +28,7 @@
 (define RLIST (read-residents "residentSmall.csv"))
 
 
+
 ;Starting from here is code made by students
 
 ;Uxilery Method to create a base for matches that suits the order of the PLIST
@@ -108,8 +109,8 @@
 
 ;Fifth Method: get-match
 (define (get-match pid matches)
-  (cond ((null? matches) '())
-    ((string=? pid (car (car matches))) (car matches))
+  (cond ((null? matches) (cons pid (list '())))
+  ((string=? pid (car (car matches))) (car matches))
   (else (get-match pid (cdr matches)))
   )
 )
@@ -136,6 +137,88 @@
 
 
 ;Seventh Method: offer
+(define (offer rinfo rlist plist matches) 
+  (let loop ((rol (cadddr rinfo)))    ; loops over programs on the residents rol
+    (if (null? rol)
+        matches
+        (let* ((pid (car rol))
+               (pinfo (get-program-info pid plist))
+               (result (evaluate rinfo pinfo rlist plist matches)))
+          (if (equal? result matches) ; if result = matches the resident was rejected
+              (loop (cdr rol))
+              result)))))
 
 
+; Evaluate: Tries to match a resident with a specific program
+(define (evaluate rinfo pinfo rlist plist matches)
+  (let* ((rid (car rinfo))
+        (rid-rank (rank rid pinfo))
+        (pid (car pinfo))
+        (capacity (caddr pinfo))
+        (current-match (get-match pid matches)))
+
+  (cond
+    ((or (not(number? rid-rank)) (< rid-rank 0)) ; Residen unranked, reject
+      matches)
+
+    ((null? current-match)  ; Create new match entry if program isn't on it yet
+       (cons (list pid (list (cons rid rid-rank))) matches))
+
+    (else
+      (let ((current-residents (cadr current-match)))
+      (cond
+        ((< (length current-residents) capacity) ; if capacity isn't full, add residnet
+            (update-matches pid (add-resident-to-match (cons rid rid-rank) current-match) matches))
+
+          (else ; capacity is full
+            (let* ((least-pref (car current-residents))   
+                   (least-rid  (car least-pref))
+                   (least-rank (cdr least-pref)))
+                  
+            (cond
+              ((< rid-rank least-rank) ; if new residnet preferred, remove least preffered
+
+                (let* ((trimmed-residents (cdr current-residents))
+                      (temp-match    (list pid trimmed-residents))
+                      (updated-match (add-resident-to-match (cons rid rid-rank) temp-match))
+                      (new-matches   (update-matches pid updated-match matches))
+                      (removed-rinfo  (get-resident-info least-rid rlist)))
+
+                (offer removed-rinfo rlist plist new-matches)))  ; Removed resident needs to match with a new prog
+              (else ; resident rejected
+                matches))))))))))
+
+; helper for evaluate
+(define (update-matches pid new-match matches)
+  (if (null? matches)
+      (list new-match)
+      (if (string=? pid (car (car matches)))
+          (cons new-match (cdr matches))
+          (cons (car matches) (update-matches pid new-match (cdr matches))))))
+      
+
+
+; Gale Shapley
+; if no residents left: return matches
+; take next resident try to match them (offer)
+; update matches
+; repeat with remaining residents
+
+
+(define (gale-shapley-print rlist plist)
+  (let* ((matches (gale-shapley rlist plist '()))
+        (not-matched-list (get-not-matched-list rlist matches)))
+  (for-each (lambda(m)
+    (display-program-matches m rlist plist)) matches)
+  (display-not-matched not-matched-list rlist)
+  (display "Number of unmatched residents: ")
+    (display (length not-matched-list)) (newline)
+  (display "Number of positions available: ")
+  (display (get-total-available-positions matches plist))
+  (newline))
+)
+; get-not-matched-list
+; display program matches
+; display not matched
+; get-total available positons
 

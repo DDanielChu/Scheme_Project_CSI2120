@@ -188,4 +188,38 @@
                 (offer removed-rinfo rlist plist new-matches)))  ; Removed resident needs to match with a new prog
               (else ; resident rejected
                 matches))))))))))
+
+; helper for evaluate
+(define (update-matches pid new-match matches)
+  (if (null? matches)
+      (list new-match)
+      (if (string=? pid (car (car matches)))
+          (cons new-match (cdr matches))
+          (cons (car matches) (update-matches pid new-match (cdr matches))))))
       
+
+
+; Gale Shapley
+; if no residents left: return matches
+; take next resident try to match them (offer)
+; update matches
+; repeat with remaining residents
+
+
+(define (gale-shapley-print rlist plist)
+  (let* ((matches (gale-shapley rlist plist '()))
+        (not-matched-list (get-not-matched-list rlist matches)))
+  (for-each (lambda(m)
+    (display-program-matches m rlist plist)) matches)
+  (display-not-matched not-matched-list rlist)
+  (display "Number of unmatched residents: ")
+    (display (length not-matched-list)) (newline)
+  (display "Number of positions available: ")
+  (display (get-total-available-positions matches plist))
+  (newline))
+
+; get-not-matched-list
+; display program matches
+; display not matched
+; get-total available positons
+
